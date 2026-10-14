@@ -1,26 +1,3 @@
-*{
-    margin: 0;
-    box-sizing: border-box;
-}
-
-section{
-    padding-bottom: 100px;
-}
-
-.c-menu{
-    background-color: silver;
-    flex-wrap: wrap;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    width: 100%;
-    padding: 15px;
-}
-
 /* ===================================================
    VARIABLES Y ESTILOS GENERALES
    =================================================== */
@@ -49,7 +26,7 @@ body {
   background-color: var(--bg-color);
   color: var(--text-main);
   min-height: 100vh;
-  padding: 20px;
+  padding: 20px 20px 100px 20px; /* Padding inferior para que el menú no tape el contenido */
   display: flex;
   justify-content: center;
 }
@@ -57,6 +34,15 @@ body {
 #root {
   width: 100%;
   max-width: 1100px;
+}
+
+section {
+  padding-bottom: 20px;
+}
+
+/* Encabezados globales */
+h1, h2, h3 {
+  color: var(--text-main);
 }
 
 /* ===================================================
@@ -73,14 +59,14 @@ body {
   justify-content: center;
   align-items: center;
   gap: 15px;
-  background-color: rgba(30, 41, 59, 0.95); /* Fondo semitransparente con desenfoque */
+  background-color: rgba(30, 41, 59, 0.95);
   backdrop-filter: blur(8px);
   padding: 12px 24px;
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
   flex-wrap: wrap;
-  z-index: 1000; /* Asegura que siempre esté por encima de las tarjetas y animaciones */
+  z-index: 1000;
 }
 
 .c-menu a {
@@ -141,7 +127,8 @@ body {
   transition: var(--transition);
 }
 
-.c-filtro button:hover {
+.c-filtro button:hover,
+.c-filtro button.active {
   background-color: var(--primary-color);
   color: var(--text-main);
   border-color: var(--primary-color);
@@ -257,6 +244,12 @@ body {
 .coleccion-titulo {
   font-size: 1.8rem;
   margin-bottom: 8px;
+  color: var(--text-main); /* Blanco brillante */
+}
+
+.coleccion-subtitulo {
+  color: var(--text-main);
+  margin: 20px 0 10px 0;
 }
 
 .coleccion-contador {
