@@ -20,3 +20,308 @@ section{
     width: 100%;
     padding: 15px;
 }
+
+/* ===================================================
+   VARIABLES Y ESTILOS GENERALES
+   =================================================== */
+:root {
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --card-hover: #334155;
+  --primary-color: #6366f1;
+  --primary-hover: #4f46e5;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-color: #ef4444;
+  --border-color: #334155;
+  --radius: 12px;
+  --transition: all 0.25s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+#root {
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* ===================================================
+   NAVEGACIÓN FIJA ABAJO (MENÚ PRINCIPAL)
+   =================================================== */
+.c-menu {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 1060px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  background-color: rgba(30, 41, 59, 0.95); /* Fondo semitransparente con desenfoque */
+  backdrop-filter: blur(8px);
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  flex-wrap: wrap;
+  z-index: 1000; /* Asegura que siempre esté por encima de las tarjetas y animaciones */
+}
+
+.c-menu a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.c-menu a:hover,
+.c-menu a.active {
+  color: var(--text-main);
+  background-color: var(--primary-color);
+}
+
+/* ===================================================
+   BUSCADOR Y FILTROS
+   =================================================== */
+.c-buscador {
+  width: 100%;
+  max-width: 500px;
+  display: block;
+  margin: 0 auto 25px auto;
+  padding: 12px 18px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-main);
+  font-size: 1rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.c-buscador:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.c-filtro {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.c-filtro button {
+  background-color: var(--card-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  text-transform: capitalize;
+  transition: var(--transition);
+}
+
+.c-filtro button:hover {
+  background-color: var(--primary-color);
+  color: var(--text-main);
+  border-color: var(--primary-color);
+}
+
+/* ===================================================
+   GRID DE LISTAS Y PRODUCTOS
+   =================================================== */
+.c-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.c-lista-pokemon {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.c-lista-pokemon:hover {
+  transform: translateY(-4px);
+  background-color: var(--card-hover);
+  border-color: var(--primary-color);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.c-lista-pokemon p {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.c-lista-pokemon img {
+  object-fit: contain;
+  background-color: #ffffff;
+  padding: 8px;
+  border-radius: 8px;
+  max-width: 100%;
+  height: 120px;
+}
+
+/* ===================================================
+   DETALLE DEL PRODUCTO (COMPONENTE FAKEAPI)
+   =================================================== */
+.c-detalle-producto {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 30px;
+  max-width: 600px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.c-detalle-producto h1 {
+  font-size: 1.5rem;
+  color: var(--text-main);
+}
+
+.c-detalle-producto img {
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: var(--radius);
+  max-height: 250px;
+  object-fit: contain;
+}
+
+.c-detalle-producto p {
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.c-detalle-producto button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius);
+  background-color: var(--primary-color);
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.c-detalle-producto button:hover {
+  background-color: var(--primary-hover);
+  transform: scale(1.03);
+}
+
+/* ===================================================
+   SECCIÓN DE COLECCIÓN
+   =================================================== */
+.coleccion {
+  text-align: center;
+}
+
+.coleccion-titulo {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.coleccion-contador {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.coleccion-boton {
+  background-color: var(--primary-color);
+  color: var(--text-main);
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 25px;
+  transition: var(--transition);
+}
+
+.coleccion-boton:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.coleccion-boton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.coleccion-album {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.coleccion-pokemon {
+  background-color: var(--card-bg);
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+  transition: var(--transition);
+}
+
+.coleccion-pokemon.capturado {
+  border-style: solid;
+  border-color: var(--primary-color);
+  opacity: 1;
+  cursor: pointer;
+}
+
+.coleccion-pokemon.capturado:hover {
+  transform: scale(1.05);
+}
+
+.coleccion-pokemon img {
+  background-color: #fff;
+  padding: 4px;
+  border-radius: 4px;
+  object-fit: contain;
+}

@@ -3,82 +3,80 @@ import { useNavigate } from 'react-router-dom'
 import './style.css'
 
 function Inicio() {
-  const [todoslospokes, setTodoslospokes] = useState([])
+  const [productos, setProductos] = useState([])
   const [busqueda, setBusqueda] = useState('')
-  const [tipopoke, setTipopoke] = useState('All')
+  const [categoria, setCategoria] = useState('All')
+  const [categorias, setCategorias] = useState(['All'])
   const navigate = useNavigate()
 
   useEffect(() => {
-    const cargarPokemons = async () => {
-      try {
-        if (tipopoke === 'All') {
-          const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025')
-          const responseData = await response.json()
-          setTodoslospokes(responseData.results ?? [])
-          return
-        }
+    fetch('https://fakeapi.net/products')
+      .then((res) => res.json())
+      .then((data) => {
+        // Extraemos la lista según la estructura de la API (si viene como array o dentro de un objeto)
+        const listaProductos = Array.isArray(data) 
+          ? data 
+          : (data.products || data.data || [])
 
-        const response = await fetch(`https://pokeapi.co/api/v2/type/${tipopoke}`)
-        const responseData = await response.json()
-        const mascotas = responseData.pokemon?.map((entry) => entry.pokemon) ?? []
-        setTodoslospokes(mascotas)
-      } catch (error) {
-        console.error('Error:', error)
-      }
-    }
+        setProductos(listaProductos)
+        
+        // Extraer categorías de forma segura
+        const cats = ['All', ...new Set(listaProductos.map((p) => p.category).filter(Boolean))]
+        setCategorias(cats)
+      })
+      .catch((error) => {
+        console.error('Error al cargar productos:', error)
+        setProductos([]) // Si falla la API, mantenemos un arreglo vacío para evitar pantallas rojas
+      })
+  }, [])
 
-    cargarPokemons()
-  }, [tipopoke])
+  // Aseguramos que siempre sea un array antes de hacer el filter
+  const productosFiltrados = (Array.isArray(productos) ? productos : []).filter((prod) => {
+    const coincideCategoria = categoria === 'All' || prod.category === categoria
+    const coincideBusqueda = prod.title?.toLowerCase().includes(busqueda.toLowerCase())
+    return coincideCategoria && coincideBusqueda
+  })
 
-  const resultados = busqueda.trim().length >= 3 && isNaN(busqueda)
-    ? todoslospokes.filter((pokemon) =>
-        pokemon.name.toLowerCase().includes(busqueda.toLowerCase())
-      )
-    : todoslospokes
-
-  const tipos = [
-    'All',
-    'normal', 'fighting', 'flying', 'poison', 'ground', 'rock',
-    'bug', 'ghost', 'steel', 'fire', 'water', 'grass', 'electric',
-    'psychic', 'ice', 'dragon', 'dark', 'fairy', 'stellar', 'shadow', 'unknown'
-  ]
-
-  if (todoslospokes.length === 0) return <p>Cargando...</p>
-  if (resultados.length === 0) return <p>No se encontraron Pokémon.</p>
+  if (!productos || productos.length === 0) return <p>Cargando productos...</p>
+  if (productosFiltrados.length === 0) return <p>No se encontraron productos.</p>
 
   return (
     <>
       <div className="c-filtro">
-        {tipos.map((unTipo, index) => (
-          <button type="button" key={index} onClick={() => setTipopoke(unTipo)}>
-            {unTipo}
+        {categorias.map((cat, index) => (
+          <button type="button" key={index} onClick={() => setCategoria(cat)}>
+            {cat}
           </button>
         ))}
       </div>
 
       <input
         type="text"
-        placeholder="Buscar Pokémon"
+        placeholder="Buscar producto..."
         value={busqueda}
         onChange={(e) => setBusqueda(e.target.value)}
         className="c-buscador"
       />
       
       <div className="c-lista">
-      {resultados.map((pokemon) => (
-        <div className="c-lista-pokemon" key={pokemon.name} onClick={() => navigate(`/pokemon/${pokemon.name}`)}>
-          <p>{pokemon.url.split('/')[6]}</p>
-          <p>{pokemon.name}</p>
-
-          <img
-            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.url.split('/')[6]}.png`}
-            alt={`Pokémon ${pokemon.name}`}
-            width="auto"
-            height="60"
-            loading="lazy"
-          />
-        </div>
-      ))}
+        {productosFiltrados.map((prod) => (
+          <div 
+            className="c-lista-pokemon" 
+            key={prod.id} 
+            onClick={() => navigate(`/fakeapi/${prod.id}`)}
+          >
+            <p>#{prod.id}</p>
+            <p>{prod.title}</p>
+            <img
+              src={prod.image}
+              alt={prod.title}
+              width="auto"
+              height="60"
+              loading="lazy"
+            />
+            <p>${prod.price}</p>
+          </div>
+        ))}
       </div>
     </>
   )

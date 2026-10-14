@@ -3,96 +3,103 @@ import { useNavigate } from 'react-router-dom';
 import './style.css';
 
 function Coleccion() {
-  const totalPokes = 1025;
+  const [productos, setProductos] = useState([]);
   const [listaCapturados, setListaCapturados] = useState(() => {
     try {
-      const guardados = JSON.parse(localStorage.getItem('misNumeros') || '[]');
+      const guardados = JSON.parse(localStorage.getItem('misProductos') || '[]');
       return Array.isArray(guardados) ? [...new Set(guardados.map(Number))] : [];
     } catch {
       return [];
     }
   });
-  const [pokemones, setPokemones] = useState([]);
   const [nuevos, setNuevos] = useState([]);
   const navigate = useNavigate();
-  const espacio = Array.from({ length: totalPokes }, (_, i) => i + 1);
 
-  useEffect(() => {
-    fetch('https://pokeapi.co/api/v2/pokemon?limit=1025')
-      .then((respuesta) => respuesta.json())
-      .then((datos) => setPokemones(datos.results))
-      .catch((error) => console.error('Error al cargar Pokémon:', error));
-  }, []);
+useEffect(() => {
+  fetch('https://fakeapi.net/products')
+    .then((respuesta) => respuesta.json())
+    .then((datos) => {
+      const lista = Array.isArray(datos) ? datos : (datos.products || datos.data || []);
+      setProductos(lista);
+    })
+    .catch((error) => console.error('Error al cargar productos:', error));
+}, []);
 
-  const capturarAleatorios = () => {
-    const seleccionados = Array.from(
-      { length: 4 },
-      () => Math.floor(Math.random() * totalPokes) + 1
-    );
+  const totalProductos = productos.length;
+
+  const obtenerAleatorios = () => {
+    if (totalProductos === 0) return;
+    
+    const seleccionados = Array.from({ length: 4 }, () => {
+      const prodRandom = productos[Math.floor(Math.random() * totalProductos)];
+      return prodRandom?.id;
+    }).filter(Boolean);
+
     const vistos = new Set(listaCapturados);
     const resultados = seleccionados.map((id) => {
       const repetido = vistos.has(id);
       vistos.add(id);
       return { id, repetido };
     });
-    const actualizados = [...vistos];
 
+    const actualizados = [...vistos];
     setListaCapturados(actualizados);
     setNuevos(resultados);
-    localStorage.setItem('misNumeros', JSON.stringify(actualizados));
+    localStorage.setItem('misProductos', JSON.stringify(actualizados));
   };
 
   return (
     <main className="coleccion">
-      <h1 className="coleccion-titulo">Colección</h1>
-      <p className="coleccion-contador">{listaCapturados.length} <span>/ {totalPokes}</span></p>
+      <h1 className="coleccion-titulo">Colección de Productos</h1>
+      <p className="coleccion-contador">{listaCapturados.length} <span>/ {totalProductos}</span></p>
+      
       <button
         className="coleccion-boton"
-        onClick={capturarAleatorios}
-        disabled={listaCapturados.length >= totalPokes}
+        onClick={obtenerAleatorios}
+        disabled={totalProductos > 0 && listaCapturados.length >= totalProductos}
       >
-        4 nuevos
+        Obtener 4 aleatorios
       </button>
 
-      {nuevos.length > 0 && <h2 className="coleccion-subtitulo">Tus nuevos Pokémon</h2>}
+      {nuevos.length > 0 && <h2 className="coleccion-subtitulo">Nuevos obtenidos</h2>}
       <section className="coleccion-nuevos">
-        {nuevos.map(({ id, repetido }, indice) => (
-          <div
-            key={`${id}-${indice}`}
-            className={repetido ? 'coleccion-nuevo repetido' : 'coleccion-nuevo'}
-            onClick={() => navigate(`/pokemon/${id}`)}
-          >
-            <p>{id}</p>
-            <img
-              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`}
-              alt={pokemones[id - 1]?.name || `Pokémon ${id}`}
-              width="60"
-              height="60"
-            />
-            <p>{pokemones[id - 1]?.name || ''}</p>
-          </div>
-        ))}
+        {nuevos.map(({ id, repetido }, indice) => {
+          const item = productos.find((p) => p.id === id);
+          return (
+            <div
+              key={`${id}-${indice}`}
+              className={repetido ? 'coleccion-nuevo repetido' : 'coleccion-nuevo'}
+              onClick={() => navigate(`/fakeapi/${id}`)}
+            >
+              <p>#{id}</p>
+              {item && (
+                <>
+                  <img src={item.image} alt={item.title} width="60" height="60" />
+                  <p>{item.title}</p>
+                </>
+              )}
+            </div>
+          );
+        })}
       </section>
 
       <section className="coleccion-album">
-        {espacio.map((id) => {
-          const capturado = listaCapturados.includes(id);
+        {productos.map((prod) => {
+          const capturado = listaCapturados.includes(prod.id);
           return (
             <div
-              key={id}
+              key={prod.id}
               className={capturado ? 'coleccion-pokemon capturado' : 'coleccion-pokemon'}
-              onClick={() => capturado && navigate(`/pokemon/${id}`)}
+              onClick={() => capturado && navigate(`/fakeapi/${prod.id}`)}
             >
-              {capturado && (
-                <img
-                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
-                  width="auto"
-                  height="45"
-                  loading="lazy"
-                  alt={String(id)}
-                />
+              {capturado ? (
+                <>
+                  <img src={prod.image} width="45" height="45" loading="lazy" alt={prod.title} />
+                  <p>#{prod.id}</p>
+                </>
+              ) : (
+                <p>#{prod.id}</p>
               )}
-              <p>{id}</p>
             </div>
           );
         })}
